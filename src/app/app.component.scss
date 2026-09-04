@@ -1,0 +1,240 @@
+.layout {
+  position: relative;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(160deg, #0a1020cc 0%, #050913cc 100%);
+}
+
+.sidebar-col {
+  width: 350px;
+  min-width: 350px;
+  flex-shrink: 0;
+  transition:
+    width 0.28s ease,
+    min-width 0.28s ease,
+    opacity 0.22s ease;
+  overflow: hidden;
+}
+
+.sidebar-col--hidden {
+  width: 0;
+  min-width: 0;
+  opacity: 0;
+  pointer-events: none;
+  border: none;
+}
+
+.map-col {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+}
+
+app-map {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+/* Bouton de bascule de la sidebar : ancre sur .layout (donc positionne par
+   rapport au viewport). Quand la sidebar est OUVERTE, il vient se placer dans
+   l'en-tete blanc, dans le coin haut-droit du header. Quand la sidebar est
+   FERMEE, il se loge au bord gauche du viewport pour rouvrir le menu. */
+.sidebar-toggle {
+  position: absolute;
+  top: 18px;
+  z-index: 1200;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #0b1a3633;
+  background: #ffffff;
+  color: #0b1a36;
+  cursor: pointer;
+  box-shadow: 0 2px 10px #00000055;
+  transition: left 0.28s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-toggle:hover {
+  background: #eef3ff;
+  color: #1d4ed8;
+  transform: scale(1.05);
+}
+
+/* Sidebar ouverte : on positionne le bouton dans le header blanc,
+   colle au bord droit de la sidebar (350 px sur desktop). */
+.sidebar-toggle[aria-expanded='true'] {
+  left: calc(350px - 44px);
+}
+
+/* Sidebar fermee : on bascule au bord gauche du viewport avec un fond sombre
+   adapte au dessus de la carte. */
+.sidebar-toggle[aria-expanded='false'] {
+  left: 10px;
+  background: linear-gradient(180deg, #1a2a4be8, #10192de8);
+  color: #f5f8ff;
+  border-color: var(--border-strong, #d8e5ff4d);
+}
+
+.sidebar-toggle[aria-expanded='false']:hover {
+  background: linear-gradient(180deg, #22365fe8, #15203ae8);
+  color: var(--accent-cyan, #4de2ff);
+}
+
+.sidebar-toggle__icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.connection {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  z-index: 1000;
+  background: linear-gradient(145deg, #111d35cc, #10182bcf);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 0.42rem 0.74rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: var(--glass-blur);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3bff8c;
+  box-shadow: 0 0 0 4px #3bff8c22, 0 0 14px #3bff8c80;
+}
+
+.connection.offline .dot {
+  background: var(--accent-red);
+}
+
+.connection.offline {
+  background: linear-gradient(145deg, #31101add, #240b13dd);
+  border-color: #ff4d6d66;
+}
+
+.connection-text--offline {
+  color: var(--accent-red);
+  font-weight: 600;
+}
+
+.firebase-error {
+  position: absolute;
+  left: 16px;
+  top: 56px;
+  z-index: 1000;
+  background: linear-gradient(145deg, #31101ae8, #2a0c14e8);
+  color: #ffc9d6;
+  border: 1px solid #ff4d6d88;
+  border-radius: 12px;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.82rem;
+  max-width: 440px;
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: var(--glass-blur);
+}
+
+@media (max-width: 768px) {
+  .layout {
+    position: relative;
+  }
+
+  .sidebar-col {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1050;
+    width: min(300px, 88vw) !important;
+    min-width: 0 !important;
+    transition: transform 0.28s ease, opacity 0.22s ease;
+  }
+
+  .sidebar-col--hidden {
+    transform: translateX(-100%);
+    width: min(300px, 88vw) !important;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Sur mobile la sidebar fait min(300px, 88vw). Le bouton vient se loger
+     dans le coin haut-droit du header blanc quand la sidebar est ouverte,
+     et a l'extreme gauche du viewport quand elle est fermee. */
+  .sidebar-toggle {
+    top: 14px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .sidebar-toggle[aria-expanded='true'] {
+    left: calc(min(300px, 88vw) - 42px);
+  }
+
+  .sidebar-toggle[aria-expanded='false'] {
+    left: 8px;
+  }
+
+  .connection {
+    left: 62px;
+    top: 12px;
+    font-size: 0.72rem;
+    padding: 0.32rem 0.6rem;
+  }
+
+  .firebase-error {
+    left: 8px;
+    top: 50px;
+    max-width: calc(100vw - 16px);
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-toggle {
+    width: 30px;
+    height: 30px;
+    top: 12px;
+  }
+
+  .sidebar-toggle[aria-expanded='true'] {
+    left: calc(min(300px, 88vw) - 38px);
+  }
+
+  .sidebar-toggle__icon {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .sidebar-toggle {
+    width: 28px;
+    height: 28px;
+  }
+
+  .sidebar-toggle[aria-expanded='true'] {
+    left: calc(min(280px, 86vw) - 34px);
+  }
+}

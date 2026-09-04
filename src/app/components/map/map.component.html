@@ -1,0 +1,73 @@
+<div class="map-stack">
+  <div class="map-search" aria-label="Recherche d'adresse">
+    <!-- Pas de <form> : évite toute soumission HTTP / rechargement de la page. -->
+    <div class="map-search__form" role="search">
+      <div class="map-search__row">
+        <input
+          class="map-search__input"
+          type="text"
+          name="addressQuery"
+          autocomplete="street-address"
+          [value]="addressQuery()"
+          (input)="onAddressInput($event)"
+          (keydown.enter)="onAddressSearchEnter($event)"
+          placeholder="Adresse ou lieu au Maroc…"
+          aria-label="Adresse ou lieu à rechercher"
+        />
+        <button type="button" class="map-search__btn" [disabled]="isGeocoding()" (click)="runAddressSearchFromUi()">
+          {{ isGeocoding() ? '…' : 'Rechercher' }}
+        </button>
+        <button
+          *ngIf="hasGeocodePin()"
+          type="button"
+          class="map-search__clear"
+          (click)="clearGeocodeResult()"
+          aria-label="Retirer le marqueur de recherche"
+          title="Retirer le marqueur"
+        >
+          ×
+        </button>
+      </div>
+      <p *ngIf="geocodeError()" class="map-search__error" role="alert">{{ geocodeError() }}</p>
+    </div>
+  </div>
+  <div id="tracking-map" class="map-root"></div>
+
+  <div
+    *ngIf="distanceModalOpen() && distanceModalData() as modal"
+    class="distance-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Distance entre le résultat et le constatateur"
+    (click)="closeDistanceModal()"
+  >
+    <div class="distance-modal" (click)="$event.stopPropagation()">
+      <h3>Constatateurs proches</h3>
+      <p class="distance-details">
+        Adresse:
+        <span class="mono">"{{ compactAddressLabel(modal.addressLabel) }}"</span>
+      </p>
+      <div class="distance-list">
+        <div class="distance-item" *ngFor="let item of modal.distances">
+          <div class="distance-item__identity">
+            <span class="distance-item__dot" [style.background]="item.color"></span>
+            <span class="distance-item__name">{{ item.agentName }}</span>
+          </div>
+          <div class="distance-item__meta">
+            <span
+              class="distance-item__status"
+              [class.distance-item__status--available]="item.statusTone === 'available'"
+              [class.distance-item__status--mission]="item.statusTone === 'mission'"
+              [class.distance-item__status--unavailable]="item.statusTone === 'unavailable'"
+              [class.distance-item__status--offline]="item.statusTone === 'offline'"
+            >
+              {{ item.statusLabel }}
+            </span>
+            <span class="distance-item__value">{{ formatDistance(item.distanceMeters) }}</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="distance-modal__close" (click)="closeDistanceModal()">Fermer</button>
+    </div>
+  </div>
+</div>

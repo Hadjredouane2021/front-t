@@ -1,0 +1,74 @@
+<aside class="sidebar">
+  <header class="header">
+    <img
+      class="header__logo"
+      src="assets/newassist-logo.png"
+      alt="NewAssist"
+      width="180"
+      height="56"
+    />
+  </header>
+
+  <section class="cards">
+    <article
+      class="card"
+      *ngFor="let c of filteredConstatateurs(); trackBy: trackByUid"
+      [class.selected]="selectedId === c.uid"
+      [style.border-left-color]="agentColor(c.uid)"
+      (click)="selectConstatateur.emit(c.uid)"
+    >
+      <div class="top">
+        <span class="dot" [style.background]="agentColor(c.uid)"></span>
+        <div>
+          <div class="name">{{ c.infos.nom }}</div>
+          <div class="muted">{{ c.infos.telephone || 'Non renseigne' }}</div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <span
+          class="pill"
+          [class.pill--available]="effectiveStatus(c).tone === 'available'"
+          [class.pill--mission]="effectiveStatus(c).tone === 'mission'"
+          [class.pill--unavailable]="effectiveStatus(c).tone === 'unavailable'"
+          [class.pill--offline]="effectiveStatus(c).tone === 'offline'"
+          [attr.title]="effectiveStatus(c).stale ? ('Statut declare : ' + c.infos.statut + ' — derniere position ' + positionAge(c)) : null"
+        >
+          Statut: {{ effectiveStatus(c).label }}
+        </span>
+        <span>
+          M:
+          {{
+            c.position_actuelle
+              ? c.position_actuelle.modeTracking === 'EN_MOUVEMENT'
+                ? '🚗 EN_MOUVEMENT'
+                : '🧭 STATIONNAIRE'
+              : 'Position inconnue'
+          }}
+        </span>
+      </div>
+
+      <div class="numbers">
+        <span>Bat: {{ c.position_actuelle?.niveauBatterie ?? 'N/A' }}%</span>
+        <span class="mono">Vit: {{ ((c.position_actuelle?.vitesse ?? 0) * 3.6).toFixed(1) }} km/h</span>
+        <span
+          class="mono"
+          [class.mono--stale]="isStale(c)"
+          [attr.title]="c.position_actuelle?.timestamp ? positionAge(c) : 'Aucune position recue'"
+        >
+          {{
+            c.position_actuelle?.timestamp
+              ? (c.position_actuelle!.timestamp | date: 'dd/MM HH:mm')
+              : 'Position inconnue'
+          }}
+        </span>
+      </div>
+
+      <button class="history-btn" (click)="showHistorique.emit(c.uid); $event.stopPropagation()">Historique</button>
+    </article>
+  </section>
+
+  <footer class="sidebar-footer">
+    Newassist &copy; Version 1
+  </footer>
+</aside>

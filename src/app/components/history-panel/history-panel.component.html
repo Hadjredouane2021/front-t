@@ -1,0 +1,12 @@
+<section class="history-panel" *ngIf="visible">
+  <div class="head">
+    <strong>Historique des positions</strong>
+    <button (click)="onClose()">Fermer</button>
+  </div>
+
+  <div *ngIf="historique.length === 0" class="muted">Aucune position historique disponible.</div>
+  <div *ngIf="historique.length > 0" class="meta">
+    <span>{{ historique.length }} points</span>
+    <span>Dernier: {{ historique[historique.length - 1].timestamp | date: 'HH:mm:ss' }}</span>
+  </div>
+</section>

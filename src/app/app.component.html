@@ -1,0 +1,45 @@
+<main class="layout">
+  <app-sidebar
+    class="sidebar-col"
+    [class.sidebar-col--hidden]="!sidebarOpen()"
+    [constatateurs]="constatateurs()"
+    [selectedId]="selectedId()"
+    (selectConstatateur)="onSelect($event)"
+    (showHistorique)="onRequestHistory($event)"
+  />
+
+  <button
+    type="button"
+    class="sidebar-toggle"
+    (click)="toggleSidebar()"
+    [attr.aria-expanded]="sidebarOpen()"
+    [attr.aria-label]="sidebarOpen() ? 'Masquer le menu latéral' : 'Afficher le menu latéral'"
+    [title]="sidebarOpen() ? 'Masquer le menu' : 'Afficher le menu'"
+  >
+    <span class="sidebar-toggle__icon" aria-hidden="true">{{ sidebarOpen() ? '‹' : '›' }}</span>
+  </button>
+
+  <section class="map-col">
+    <div class="connection" [class.offline]="!isConnected()">
+      <span class="dot"></span>
+      <span class="connection-text" [class.connection-text--offline]="!isConnected()">
+        {{ isConnected() ? 'Connecté' : 'Hors ligne' }}
+      </span>
+    </div>
+    <div class="firebase-error" *ngIf="firebaseError()">{{ firebaseError() }}</div>
+
+    <app-map
+      [constatateurs]="constatateurs()"
+      [selectedId]="selectedId()"
+      (selectedIdChange)="onSelect($event)"
+      (mapReady)="onMapReady($event)"
+    />
+
+    <app-history-panel
+      [map]="mapInstance"
+      [historique]="historique()"
+      [visible]="showHistory()"
+      (close)="onCloseHistory()"
+    />
+  </section>
+</main>
